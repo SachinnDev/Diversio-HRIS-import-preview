@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>HRIS Import Preview</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        h1 {
+            margin-bottom: 30px;
+        }
+
+        section {
+            margin-top: 30px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background: #f5f5f5;
+        }
+
+        .error {
+            color: #b00020;
+        }
+
+        .success {
+            color: #087f23;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>HRIS Import Preview</h1>
+
+    <!-- Upload form -->
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <input
+            type="file"
+            name="csv_file"
+            accept=".csv"
+            required
+        >
+
+        <button type="submit">
+            Upload CSV
+        </button>
+    </form>
+
+
+    {% if upload_error %}
+
+        <section>
+            <h2 class="error">Upload Error</h2>
+            <p>{{ upload_error }}</p>
+        </section>
+
+    {% endif %}
+
+
+    {% if total_rows is not None %}
+
+        <!-- Summary -->
+        <section>
+            <h2>Import Summary</h2>
+
+            <p>
+                <strong>Total source rows:</strong>
+                {{ total_rows }}
+            </p>
+
+            <p>
+                <strong>Employees accepted for analysis:</strong>
+                {{ accepted_employees|length }}
+            </p>
+        </section>
+
+
+        <!-- Validation errors -->
+        <section>
+            <h2>Validation Errors</h2>
+
+            {% if errors %}
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Source Row</th>
+                            <th>Error</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for error in errors %}
+                            <tr>
+                                <td>{{ error.row }}</td>
+                                <td class="error">
+                                    {{ error.message }}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+            {% else %}
+
+                <p class="success">
+                    No validation errors.
+                </p>
+
+            {% endif %}
+        </section>
+
+
+        <!-- Root employees -->
+        <section>
+            <h2>Root Employees</h2>
+
+            {% if roots %}
+
+                <ul>
+                    {% for employee in roots %}
+                        <li>
+                            {{ employee.employee_name }}
+                            ({{ employee.employee_id }})
+                        </li>
+                    {% endfor %}
+                </ul>
+
+            {% else %}
+
+                <p>No root employees.</p>
+
+            {% endif %}
+        </section>
+
+
+        <!-- Managers -->
+        <section>
+            <h2>Managers & Direct Reports</h2>
+
+            {% if managers %}
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Manager</th>
+                            <th>Employee ID</th>
+                            <th>Direct Reports</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for manager in managers %}
+                            <tr>
+                                <td>
+                                    {{ manager.employee.employee_name }}
+                                </td>
+
+                                <td>
+                                    {{ manager.employee.employee_id }}
+                                </td>
+
+                                <td>
+                                    {{ manager.direct_report_count }}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+            {% else %}
+
+                <p>No managers found.</p>
+
+            {% endif %}
+        </section>
+
+
+        <!-- Reporting cycles -->
+        <section>
+    <h2>Reporting Cycles</h2>
+
+    {% if cycles %}
+
+        <p>
+            The following employees participate in reporting cycles.
+        </p>
+
+        {% for cycle in cycles %}
+
+            <h3>Cycle {{ forloop.counter }}</h3>
+
+            <ul>
+                {% for employee in cycle %}
+                    <li>
+                        <strong>{{ employee.employee_name }}</strong>
+                        ({{ employee.employee_id }})
+                    </li>
+                {% endfor %}
+            </ul>
+
+        {% endfor %}
+
+    {% else %}
+
+        <p class="success">
+            No reporting cycles detected.
+        </p>
+
+    {% endif %}
+</section>
+        <!-- Accepted employees -->
+        <section>
+            <h2>Accepted Employees</h2>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Employee ID</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Department</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for employee in accepted_employees %}
+                        <tr>
+                            <td>{{ employee.employee_id }}</td>
+                            <td>{{ employee.employee_name }}</td>
+                            <td>{{ employee.email }}</td>
+                            <td>{{ employee.department }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </section>
+
+    {% endif %}
+
+</body>
+</html>
