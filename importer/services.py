@@ -52,25 +52,25 @@ def parse_csv(uploaded_file):
     }
 
     if (
-    missing
-    or extra
-    or duplicate_headers
-    or len(normalized_headers) != len(expected_headers)
+        missing
+        or extra
+        or duplicate_headers
+        or len(normalized_headers) != len(expected_headers)
     ):
-     message = "Invalid CSV headers."
+        message = "Invalid CSV headers."
 
-    if missing:
-        message += f" Missing: {', '.join(sorted(missing))}."
+        if missing:
+            message += f" Missing: {', '.join(sorted(missing))}."
 
-    if extra:
-        message += f" Unexpected: {', '.join(sorted(extra))}."
+        if extra:
+            message += f" Unexpected: {', '.join(sorted(extra))}."
 
-    if duplicate_headers:
-        message += (
-            f" Duplicate headers: {', '.join(sorted(duplicate_headers))}."
-        )
+        if duplicate_headers:
+            message += (
+                f" Duplicate headers: {', '.join(sorted(duplicate_headers))}."
+            )
 
-    raise ValueError(message)
+        raise ValueError(message)
 
     rows = []
 
