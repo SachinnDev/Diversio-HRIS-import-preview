@@ -140,7 +140,7 @@ The application was tested against the supplied Diversio HRIS sample CSV.
 
 ## Time Spent
 
-Approximately 90 minutes on implementation and testing, excluding the walkthrough recording.
+Approximately 90 minutes of focused implementation and testing, excluding setup, repository preparation, and the walkthrough recording.
 
 ## AI Usage
 
