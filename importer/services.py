@@ -184,10 +184,7 @@ def build_employee_lookups(accepted_rows):
 
     return employees_by_id, employees_by_email
 
-def resolve_managers(accepted_rows):
-    employees_by_id, employees_by_email = build_employee_lookups(
-        accepted_rows
-    )
+def resolve_managers(accepted_rows, employees_by_id, employees_by_email):
 
     relationships = {}
     roots = []

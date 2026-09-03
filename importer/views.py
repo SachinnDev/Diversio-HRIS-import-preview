@@ -31,9 +31,12 @@ def upload_csv(request):
 
                 # Step 4: Resolve manager relationships
                 relationships, roots, manager_errors = resolve_managers(
-                    accepted_rows
-                )
-
+                accepted_rows,
+                employees_by_id,
+                employees_by_email,
+                   )
+                
+            
                 # Step 5: Calculate managers and direct reports
                 managers = calculate_direct_reports(
                     relationships,
